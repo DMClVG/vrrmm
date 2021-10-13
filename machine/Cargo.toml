@@ -1,0 +1,8 @@
+[package]
+name = "machine"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+shared = {path = "../shared"}
+structopt = "0.3.23"
