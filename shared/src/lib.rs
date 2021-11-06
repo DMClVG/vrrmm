@@ -56,6 +56,9 @@ pub enum Instruction {
     DIVRN(Register, Numeral),
     DIVRR(Register, Register),
 
+    SHR(Register),
+    SHL(Register),
+
     JMP(CAddress),
     JMPIF(Case, CAddress)
 }
@@ -89,6 +92,9 @@ impl Instruction {
             Instruction::MULRR(_, _) => 0x1C,
             Instruction::DIVRN(_, _) => 0x0D,
             Instruction::DIVRR(_, _) => 0x1D,
+
+            Instruction::SHR(_) => 0x2D,
+            Instruction::SHL(_) => 0x3D,
         
             Instruction::JMP(_) => 0x0F,
             Instruction::JMPIF(_, _) => 0x1F,

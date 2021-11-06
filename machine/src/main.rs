@@ -105,6 +105,12 @@ impl Machine {
             0x1D => { 
                 Some(Instruction::DIVRR(self.next_byte(), self.next_byte()))
             },
+            0x2D => { 
+                Some(Instruction::SHR(self.next_byte()))
+            },
+            0x3D => { 
+                Some(Instruction::SHL(self.next_byte()))
+            },
 
             0x0F => {
                 Some(Instruction::JMP(self.next_byte()))
@@ -185,6 +191,13 @@ impl Machine {
                 self.registers[dest as usize] = self.registers[dest as usize].wrapping_sub(self.registers[src as usize]);
             },
 
+            Instruction::SHR(reg) => {
+                self.registers[reg as usize] >>= 1;
+            },
+            Instruction::SHL(reg) => {
+                self.registers[reg as usize] <<= 1;
+            },
+
             Instruction::JMP(to) => {
                 match self.state {
                     State::Running { ref mut pc } => {
@@ -242,7 +255,7 @@ impl Machine {
         }
     }
 
-    fn run(mut self) {
+    fn run(&mut self) {
         self.state = State::Running { pc: 0 };
         loop {
             let next = self.next_ins();

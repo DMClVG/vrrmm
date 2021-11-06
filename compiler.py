@@ -11,13 +11,18 @@ lexical_map = {
     "sub": r"^(-?\d+|[{}])\s+from\s+([{}])$".format(regs, w_regs),
     "div": r"^([{}])\s+by\s+(-?\d+|[{}])$".format(w_regs, regs),
     "mul": r"^([{}])\s+by\s+(-?\d+|[{}])$".format(w_regs, regs),
+    "shr": r"^([{}])$".format(w_regs),
+    "shl": r"^([{}])$".format(w_regs),
 
+    #"mov": r"^([-$]?\d+|$?[{}])\s+to\s+($?\d+|$?[{}])$".format(regs, w_regs),
 
     "mov": r"^([-$]?\d+|[$]?[{}])\s+to\s+([$][\d]+|[$]?[{}])$".format(regs, w_regs),
 
+    # "mov": r"^(?:(-?\d+|[{0}])\s+(to)\s+(\d+|[{}])|([{}])\s+(from)\s+\$(\d+|[{}]))$".format(regs, w_regs),
     "jmp": r"^(?:if\s+([{}])\s+(==|!=|<|>|<=|>=)\s+([{}])\s+)?to\s+(\w+)$".format(regs, regs),
 
     "label": r"^as\s+(\w+)$",
+    # "alias": r"^(-?\d+|[{}])\s+as\s+(\w+)$",
     "halt": r"^$",
 }
 
@@ -49,6 +54,8 @@ ins_map = {
     "mulrr": 0x1C,
     "divrn": 0x0D,
     "divrr": 0x1D,
+    "shr": 0x2D,
+    "shl": 0x3D,
 
     "jmp": 0x0F,
     "jmpif": 0x1F,
@@ -104,7 +111,7 @@ class Lexer:
 
     def tokenize_line(self, line):
         line = line.strip().lower()
-        match = re.match(r"^(add|sub|div|mul|mov|jmp|label|halt)(?:\s+(.*))?$", line)
+        match = re.match(r"^(add|sub|div|mul|mov|jmp|label|halt|shl|shr)(?:\s+(.*))?$", line)
         if match == None: raise SyntaxError("Unknown keyword")
 
         ins = match.groups()[0]
@@ -161,6 +168,11 @@ class Parser:
                     opcode += "n"
 
                 binary = np.append(binary, [ins_map[opcode], two, one])
+            elif verb == "shr" or verb == "shl":
+                opcode = str(verb)
+                register = reg_map[params[0]]
+
+                binary = np.append(binary, [ins_map[opcode], register])
             elif verb == "mul" or verb == "div":
                 opcode = str(verb)
                 one = reg_map[params[0]]
@@ -226,7 +238,6 @@ class Parser:
                 if not label in label_lookup:
                     label_lookup[label] = []
                 label_lookup[label].append(np.size(binary) - 1) # replace jump addr with label addr later on
-
             elif verb == "halt":
                 binary = np.append(binary, [ins_map["halt"]])
 
