@@ -339,4 +339,6 @@ fn main() {
 
     let mut vm = Machine::new(std::fs::read(args.input).expect("Unable to read input file"));
     vm.run();
+
+    println!("REGISTERS: {:?}", vm.registers);
 }

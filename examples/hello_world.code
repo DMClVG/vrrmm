@@ -1,0 +1,24 @@
+mov 104 to x
+print x # H
+mov 101 to x
+print x # E
+mov 108 to x
+print x # L
+print x # L
+mov 111 to x
+print x # O
+mov 32 to x
+print x # [SPACE] 
+mov 119 to x
+print x # W
+mov 111 to x
+print x # O
+mov 114 to x
+print x # R
+mov 108 to x
+print x # L
+mov 100 to x
+print x # D
+mov 10 to x
+print x # [NEW LINE]
+halt # stop

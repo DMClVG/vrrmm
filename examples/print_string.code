@@ -1,0 +1,26 @@
+# write the string to an continious chunk in memory
+mov 99 to $200 # write ASCII character to address 200
+mov 97 to $201 # write next char to address 201
+mov 114 to $202 # " to address 202
+mov 114 to $203 # 203
+mov 111 to $204 # etc
+mov 116 to $205
+mov 10 to $206
+mov 0 to $207 # NULL TERMINATOR
+
+mov 200 to i # store the starting address of the string in register i
+
+label as print_string
+  label as print_char
+    mov $i to x # move/copy the contents of string[i] to x
+    
+    jmp if x == n to print_string_end # if x is 0 (n always == 0), exit loop
+    print x # else, print x
+    
+    add 1 to i # increment i
+    
+    jmp to print_char # loop
+label as print_string_end
+
+halt # stop execution
+

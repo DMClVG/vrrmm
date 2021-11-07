@@ -1,0 +1,89 @@
+mov 230 to a # UNSORTED ARRAY N START
+mov 254 to b # UNSORTED ARRAY N END
+
+label as rand # "randomize" the array n
+    mov a to z
+    label as iter
+        add 132 to x
+        sub 12 from y
+        add y to x
+        
+        sub 21 from x # do random calculations
+        
+        mov x to $z # write to n[z]
+        add 1 to z 
+ 
+        jmp if z <= b to iter # repeat this until z has reached th end of array n
+
+label as bubble_sort
+    mov a to i # reset i back to the start of the array
+    mov 0 to c # reset swap counter
+    label as pass
+        jmp if i >= b to pass_end # if i has reached the end of the array, end this pass
+        
+        mov $i to x # load n[i] to x
+        add 1 to i  # increment i
+        mov $i to y # load n[i+1] to y
+
+        jmp if x > y to swap # compare n[i] and n[i+1], if n[i] is bigger, swap n[i] to n[i+1] and n[i+1] to n[i]
+        jmp to pass # test next n pair
+        
+        label as swap
+            mov x to $i # move n[i] to n[i+1]
+            sub 1 from i # decrement i
+            mov y to $i # move n[i+1] to n[i]
+            add 1 to i # move i back
+            add 1 to c # increment swap counter
+            jmp to pass
+    label as pass_end
+
+    jmp if c == n to bubble_sort_completed # if no swap took place (c==0), sort has completed
+    jmp to bubble_sort # if not, jump back for another pass, until nothing is left to swap
+label as bubble_sort_completed
+
+# PRINT OUT RESULT
+mov a to i # move start of n to i
+label as print_array
+    jmp if b == i to print_array_end # if i has reached the end, stop
+    mov $i to x # else, load n[i] to x
+    
+    jmp to print_hex # print contents of x in hex
+    label as print_hex_return # print_hex jumps back to here
+    
+    mov 32 to a
+    print a # print [SPACE]
+    
+    add 1 to i # increment i
+    jmp to print_array # loop
+label as print_array_end 
+
+mov 200 to c # OK 
+halt # halt program
+
+### =============================================================================== ###
+
+
+# code for printing a value in hexadecimal. See examples/print_hex.code
+label as print_hex
+    mov x to a 
+    shr a
+    shr a
+    shr a
+    shr a
+    
+    mov 9 to c
+    jmp if a <= c to numeral
+    add 7 to a
+    label as numeral
+        add 48 to a
+        print a
+    
+    mov x to a
+    and a with 15
+    
+    jmp if a <= c to numeral2 
+    add 7 to a
+    label as numeral2
+        add 48 to a
+        print a 
+    jmp to print_hex_return # jump to where we were

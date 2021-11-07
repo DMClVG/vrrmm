@@ -1,0 +1,26 @@
+mov 42 to x # number to print
+
+label as print_hex
+  mov x to a # copy number to a
+  shr a
+  shr a
+  shr a
+  shr a # shift a to right 4 times, only leaving the 4 upper bits of the number
+
+  mov 9 to c
+  jmp if a <= c to numeral # if a should be printed as a numeral (a <= 9), skip next instruction
+  add 7 to a # add an offset to our ASCII code in case we are printing letters (A B C D E F)
+  label as numeral
+    add 48 to a # convert number to ASCII
+    print a # print out content of y in ASCII
+  
+  mov x to a # reset a
+  and a with 15 # leave only the 4 lower bits of a
+  
+  jmp if a <= c to numeral2 # check again for either a numeral or a literal
+  add 7 to a
+  label as numeral2
+    add 48 to a
+    print a # and print second hexadecimal character
+    
+halt # halt program

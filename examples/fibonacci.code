@@ -1,0 +1,59 @@
+mov 150 to i # fibonacci destination address (make sure this dest address doesn't override our code) 
+
+mov 0 to x
+mov 1 to y  # initial values
+
+label as fibonacci
+  mov y to $i # store y at address i in memory
+  add 1 to i # and increment i. Next y will be stored at i+1, then in i+2, and so on and so forth
+
+  mov 233 to z
+  jmp if y == z to end # if y has reached the limit (y == 233), jump to label end
+  
+  # if not
+  add y to x # compute next sequence number by adding x to y and storing the result in register x
+  
+  mov y to z
+  mov x to y
+  mov z to x # flip registers x and y
+  
+  jmp to print_hex # print out y in hex
+  label as print_hex_return # used by print_hex to jump back to our code. You can safely to ignore this
+  mov 32 to a
+  print a # print [SPACE]
+  
+  jmp to fibonacci # jump back
+
+label as end
+  mov 40 to c # register c contains the exit code for every program when it halts
+  halt # do halt
+
+
+### =============================================================================== ###
+
+
+# code for printing a value in hexadecimal. See examples/print_hex.code
+label as print_hex
+  mov y to a 
+  shr a
+  shr a
+  shr a
+  shr a
+
+  mov 9 to c
+  jmp if a <= c to numeral
+  add 7 to a
+  label as numeral
+    add 48 to a
+    print a
+  
+  mov y to a
+  and a with 15
+  
+  jmp if a <= c to numeral2 
+  add 7 to a
+  label as numeral2
+    add 48 to a
+    print a 
+  jmp to print_hex_return # jump to where we were
+
