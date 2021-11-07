@@ -56,8 +56,17 @@ pub enum Instruction {
     DIVRN(Register, Numeral),
     DIVRR(Register, Register),
 
+    ANDRR(Register, Register),
+    ANDRN(Register, Numeral),
+    XORRR(Register, Register),
+    XORRN(Register, Numeral),
+    ORRR(Register, Register),
+    ORRN(Register, Numeral),
+
     SHR(Register),
     SHL(Register),
+
+    PRINT(Register),
 
     JMP(CAddress),
     JMPIF(Case, CAddress)
@@ -93,8 +102,17 @@ impl Instruction {
             Instruction::DIVRN(_, _) => 0x0D,
             Instruction::DIVRR(_, _) => 0x1D,
 
+            Instruction::ANDRR(_, _) => 0xC5,
+            Instruction::ANDRN(_, _) => 0xC6,
+            Instruction::XORRR(_, _) => 0xD5,
+            Instruction::XORRN(_, _) => 0xD6,
+            Instruction::ORRR(_, _) => 0xE5,
+            Instruction::ORRN(_, _) => 0xE6,
+
             Instruction::SHR(_) => 0x2D,
             Instruction::SHL(_) => 0x3D,
+
+            Instruction::PRINT(_) => 0xA0,
         
             Instruction::JMP(_) => 0x0F,
             Instruction::JMPIF(_, _) => 0x1F,

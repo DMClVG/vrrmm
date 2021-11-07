@@ -105,11 +105,35 @@ impl Machine {
             0x1D => { 
                 Some(Instruction::DIVRR(self.next_byte(), self.next_byte()))
             },
+
+            0xC5 => {
+                Some(Instruction::ANDRR(self.next_byte(), self.next_byte()))
+            },
+            0xC6 => {
+                Some(Instruction::ANDRN(self.next_byte(), self.next_byte()))
+            },
+            0xD5 => {
+                Some(Instruction::XORRR(self.next_byte(), self.next_byte()))
+            },
+            0xD6 => {
+                Some(Instruction::XORRN(self.next_byte(), self.next_byte()))
+            },
+            0xE5 => {
+                Some(Instruction::ORRR(self.next_byte(), self.next_byte()))
+            },
+            0xE6 => {
+                Some(Instruction::ORRN(self.next_byte(), self.next_byte()))
+            },
+
             0x2D => { 
                 Some(Instruction::SHR(self.next_byte()))
             },
             0x3D => { 
                 Some(Instruction::SHL(self.next_byte()))
+            },
+
+            0xA0 => {
+                Some(Instruction::PRINT(self.next_byte()))
             },
 
             0x0F => {
@@ -191,11 +215,34 @@ impl Machine {
                 self.registers[dest as usize] = self.registers[dest as usize].wrapping_sub(self.registers[src as usize]);
             },
 
+            Instruction::ANDRR(a, b) => {
+                self.registers[a as usize] &= self.registers[b as usize];
+            },
+            Instruction::ANDRN(a, b) => {
+                self.registers[a as usize] &= b;
+            },
+            Instruction::XORRR(a, b) => {
+                self.registers[a as usize] ^= self.registers[b as usize];
+            },
+            Instruction::XORRN(a, b) => {
+                self.registers[a as usize] ^= b;
+            },
+            Instruction::ORRR(a, b) => {
+                self.registers[a as usize] |= self.registers[b as usize];
+            },
+            Instruction::ORRN(a, b) => {
+                self.registers[a as usize] |= b;
+            },
+
             Instruction::SHR(reg) => {
                 self.registers[reg as usize] >>= 1;
             },
             Instruction::SHL(reg) => {
                 self.registers[reg as usize] <<= 1;
+            },
+
+            Instruction::PRINT(reg) => {
+                print!("{}", self.registers[reg as usize] as char);
             },
 
             Instruction::JMP(to) => {
@@ -265,7 +312,7 @@ impl Machine {
                 self.execute(ins);
             }
             if let State::Halted(error) = self.state {
-                println!("VM HALTED. EXIT CODE: {}", error);
+                println!("\nVM HALTED. EXIT CODE: {}", error);
                 break;
             } else if let State::Running { pc } = self.state {
                 if pc == self.memory.len() {
@@ -290,6 +337,6 @@ struct ClArgs {
 fn main() {
     let args = ClArgs::from_args();
 
-    let vm = Machine::new(std::fs::read(args.input).expect("Unable to read input file"));
+    let mut vm = Machine::new(std::fs::read(args.input).expect("Unable to read input file"));
     vm.run();
 }

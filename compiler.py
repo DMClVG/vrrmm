@@ -9,10 +9,16 @@ lexical_map = {
     
     "add": r"^(-?\d+|[{}])\s+to\s+([{}])$".format(regs, w_regs),
     "sub": r"^(-?\d+|[{}])\s+from\s+([{}])$".format(regs, w_regs),
-    "div": r"^([{}])\s+by\s+(-?\d+|[{}])$".format(w_regs, regs),
-    "mul": r"^([{}])\s+by\s+(-?\d+|[{}])$".format(w_regs, regs),
+
     "shr": r"^([{}])$".format(w_regs),
     "shl": r"^([{}])$".format(w_regs),
+
+    "div": r"^([{}])\s+by\s+(-?\d+|[{}])$".format(w_regs, regs),
+    "mul": r"^([{}])\s+by\s+(-?\d+|[{}])$".format(w_regs, regs),
+
+    "and": r"^([{}])\s+with\s+(-?\d+|[{}])$".format(w_regs, regs),
+    "xor": r"^([{}])\s+with\s+(-?\d+|[{}])$".format(w_regs, regs),
+    "or": r"^([{}])\s+with\s+(-?\d+|[{}])$".format(w_regs, regs),
 
     #"mov": r"^([-$]?\d+|$?[{}])\s+to\s+($?\d+|$?[{}])$".format(regs, w_regs),
 
@@ -20,6 +26,8 @@ lexical_map = {
 
     # "mov": r"^(?:(-?\d+|[{0}])\s+(to)\s+(\d+|[{}])|([{}])\s+(from)\s+\$(\d+|[{}]))$".format(regs, w_regs),
     "jmp": r"^(?:if\s+([{}])\s+(==|!=|<|>|<=|>=)\s+([{}])\s+)?to\s+(\w+)$".format(regs, regs),
+
+    "print": r"^([{}])$".format(regs),
 
     "label": r"^as\s+(\w+)$",
     # "alias": r"^(-?\d+|[{}])\s+as\s+(\w+)$",
@@ -54,8 +62,18 @@ ins_map = {
     "mulrr": 0x1C,
     "divrn": 0x0D,
     "divrr": 0x1D,
+
+    "andrr": 0xC5,
+    "andrn": 0xC6,
+    "xorrr": 0xD5,
+    "xorrn": 0xD6,
+    "orrr": 0xE5,
+    "orrn": 0xE6,
+
     "shr": 0x2D,
     "shl": 0x3D,
+
+    "print": 0xA0,
 
     "jmp": 0x0F,
     "jmpif": 0x1F,
@@ -111,7 +129,7 @@ class Lexer:
 
     def tokenize_line(self, line):
         line = line.strip().lower()
-        match = re.match(r"^(add|sub|div|mul|mov|jmp|label|halt|shl|shr)(?:\s+(.*))?$", line)
+        match = re.match(r"^({})(?:\s+(.*))?$".format("|".join(lexical_map)), line)
         if match == None: raise SyntaxError("Unknown keyword")
 
         ins = match.groups()[0]
@@ -173,7 +191,7 @@ class Parser:
                 register = reg_map[params[0]]
 
                 binary = np.append(binary, [ins_map[opcode], register])
-            elif verb == "mul" or verb == "div":
+            elif verb == "mul" or verb == "div" or verb == "and" or verb == "xor" or verb == "or":
                 opcode = str(verb)
                 one = reg_map[params[0]]
                 two = params[1]
@@ -222,6 +240,9 @@ class Parser:
                         one = parse_num(one)
                         opcode += "n"
                 binary = np.append(binary, [ins_map[opcode], two, one])
+            elif verb == "print":
+                reg = reg_map[params[0]]
+                binary = np.append(binary, [ins_map["print"], reg])
             elif verb == "label":
                 if params[0] in labels:
                     raise ParserError("Label '%s' already defined" % params[0])
