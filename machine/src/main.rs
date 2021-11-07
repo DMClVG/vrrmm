@@ -316,7 +316,7 @@ impl Machine {
                 break;
             } else if let State::Running { pc } = self.state {
                 if pc == self.memory.len() {
-                    println!("VM HALTED. REACHED EOF");
+                    println!("\nVM HALTED. REACHED EOF");
                     break;
                 }
             }
