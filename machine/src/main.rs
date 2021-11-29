@@ -35,109 +35,109 @@ impl Machine {
         }
     }
 
-    fn next_ins(&mut self) -> Option<Instruction> {
+    fn fetch(&mut self) -> Option<Op> {
         let ins_code = self.next_byte();
 
         match ins_code {
-            0x00 => Some(Instruction::NOOP),
-            0xFF => Some(Instruction::HALT),
+            0x00 => Some(Op::NOOP),
+            0xFF => Some(Op::HALT),
 
             0x0E => { 
-                Some(Instruction::MOVRN(self.next_byte(), self.next_byte()))
+                Some(Op::MOVRN(self.next_byte(), self.next_byte()))
             },
             0x1E => { 
-                Some(Instruction::MOVRR(self.next_byte(), self.next_byte()))
+                Some(Op::MOVRR(self.next_byte(), self.next_byte()))
             },
             0xAE => { 
-                Some(Instruction::MOVRA(self.next_byte(), self.next_byte()))
+                Some(Op::MOVRA(self.next_byte(), self.next_byte()))
             },
             0xBE => { 
-                Some(Instruction::MOVRX(self.next_byte(), self.next_byte()))
+                Some(Op::MOVRX(self.next_byte(), self.next_byte()))
             },
 
             0xE1 => { 
-                Some(Instruction::MOVAN(self.next_byte(), self.next_byte()))
+                Some(Op::MOVAN(self.next_byte(), self.next_byte()))
             },
             0xE2 => { 
-                Some(Instruction::MOVAR(self.next_byte(), self.next_byte()))
+                Some(Op::MOVAR(self.next_byte(), self.next_byte()))
             },
             0xE3 => { 
-                Some(Instruction::MOVAA(self.next_byte(), self.next_byte()))
+                Some(Op::MOVAA(self.next_byte(), self.next_byte()))
             },
             0xE4 => { 
-                Some(Instruction::MOVAX(self.next_byte(), self.next_byte()))
+                Some(Op::MOVAX(self.next_byte(), self.next_byte()))
             },
 
             0xEA => { 
-                Some(Instruction::MOVXN(self.next_byte(), self.next_byte()))
+                Some(Op::MOVXN(self.next_byte(), self.next_byte()))
             },
             0xEB => { 
-                Some(Instruction::MOVXR(self.next_byte(), self.next_byte()))
+                Some(Op::MOVXR(self.next_byte(), self.next_byte()))
             },
             0xEC => { 
-                Some(Instruction::MOVXA(self.next_byte(), self.next_byte()))
+                Some(Op::MOVXA(self.next_byte(), self.next_byte()))
             },
             0xED => { 
-                Some(Instruction::MOVXX(self.next_byte(), self.next_byte()))
+                Some(Op::MOVXX(self.next_byte(), self.next_byte()))
             },
 
             0x0A => { 
-                Some(Instruction::ADDRN(self.next_byte(), self.next_byte()))
+                Some(Op::ADDRN(self.next_byte(), self.next_byte()))
             },
             0x1A => { 
-                Some(Instruction::ADDRR(self.next_byte(), self.next_byte()))
+                Some(Op::ADDRR(self.next_byte(), self.next_byte()))
             },
             0x0B => { 
-                Some(Instruction::SUBRN(self.next_byte(), self.next_byte()))
+                Some(Op::SUBRN(self.next_byte(), self.next_byte()))
             },
             0x1B => { 
-                Some(Instruction::SUBRR(self.next_byte(), self.next_byte()))
+                Some(Op::SUBRR(self.next_byte(), self.next_byte()))
             },
             0x0C => { 
-                Some(Instruction::MULRN(self.next_byte(), self.next_byte()))
+                Some(Op::MULRN(self.next_byte(), self.next_byte()))
             },
             0x1C => { 
-                Some(Instruction::MULRR(self.next_byte(), self.next_byte()))
+                Some(Op::MULRR(self.next_byte(), self.next_byte()))
             },
             0x0D => { 
-                Some(Instruction::DIVRN(self.next_byte(), self.next_byte()))
+                Some(Op::DIVRN(self.next_byte(), self.next_byte()))
             },
             0x1D => { 
-                Some(Instruction::DIVRR(self.next_byte(), self.next_byte()))
+                Some(Op::DIVRR(self.next_byte(), self.next_byte()))
             },
 
             0xC5 => {
-                Some(Instruction::ANDRR(self.next_byte(), self.next_byte()))
+                Some(Op::ANDRR(self.next_byte(), self.next_byte()))
             },
             0xC6 => {
-                Some(Instruction::ANDRN(self.next_byte(), self.next_byte()))
+                Some(Op::ANDRN(self.next_byte(), self.next_byte()))
             },
             0xD5 => {
-                Some(Instruction::XORRR(self.next_byte(), self.next_byte()))
+                Some(Op::XORRR(self.next_byte(), self.next_byte()))
             },
             0xD6 => {
-                Some(Instruction::XORRN(self.next_byte(), self.next_byte()))
+                Some(Op::XORRN(self.next_byte(), self.next_byte()))
             },
             0xE5 => {
-                Some(Instruction::ORRR(self.next_byte(), self.next_byte()))
+                Some(Op::ORRR(self.next_byte(), self.next_byte()))
             },
             0xE6 => {
-                Some(Instruction::ORRN(self.next_byte(), self.next_byte()))
+                Some(Op::ORRN(self.next_byte(), self.next_byte()))
             },
 
             0x2D => { 
-                Some(Instruction::SHR(self.next_byte()))
+                Some(Op::SHR(self.next_byte()))
             },
             0x3D => { 
-                Some(Instruction::SHL(self.next_byte()))
+                Some(Op::SHL(self.next_byte()))
             },
 
             0xA0 => {
-                Some(Instruction::PRINT(self.next_byte()))
+                Some(Op::PRINT(self.next_byte()))
             },
 
             0x0F => {
-                Some(Instruction::JMP(self.next_byte()))
+                Some(Op::JMP(self.next_byte()))
             }
             0x1F => {
                 let case: Case = match self.next_byte() {
@@ -151,7 +151,7 @@ impl Machine {
                         unimplemented!()
                     }
                 };
-                Some(Instruction::JMPIF(case, self.next_byte()))
+                Some(Op::JMPIF(case, self.next_byte()))
             }
 
             _ => {
@@ -161,91 +161,91 @@ impl Machine {
     }
 
 
-    fn execute(&mut self, ins: Instruction) {
+    fn execute(&mut self, ins: Op) {
         match ins {
-            Instruction::MOVRN(dest, src) => {
+            Op::MOVRN(dest, src) => {
                 self.registers[dest as usize] = src as u8;
             },
-            Instruction::MOVRR(dest, src) => {
+            Op::MOVRR(dest, src) => {
                 self.registers[dest as usize] = self.registers[src as usize];
             },
-            Instruction::MOVRA(dest, src) => {
+            Op::MOVRA(dest, src) => {
                 self.registers[dest as usize] = self.memory[src as usize];
             },
-            Instruction::MOVRX(dest, src) => {
+            Op::MOVRX(dest, src) => {
                 self.registers[dest as usize] = self.memory[self.registers[src as usize] as usize];
             },
 
-            Instruction::MOVAN(dest, src) => {
+            Op::MOVAN(dest, src) => {
                 self.memory[dest as usize] = src as u8;
             },
-            Instruction::MOVAR(dest, src) => {
+            Op::MOVAR(dest, src) => {
                 self.memory[dest as usize] = self.registers[src as usize];
             },
-            Instruction::MOVAA(dest, src) => {
+            Op::MOVAA(dest, src) => {
                 self.memory[dest as usize] = self.memory[src as usize];
             },
-            Instruction::MOVAX(dest, src) => {
+            Op::MOVAX(dest, src) => {
                 self.memory[dest as usize] = self.memory[self.registers[src as usize] as usize];
             },
 
-            Instruction::MOVXN(dest, src) => {
+            Op::MOVXN(dest, src) => {
                 self.memory[self.registers[dest as usize] as usize] = src as u8;
             },
-            Instruction::MOVXR(dest, src) => {
+            Op::MOVXR(dest, src) => {
                 self.memory[self.registers[dest as usize] as usize] = self.registers[src as usize];
             },
-            Instruction::MOVXA(dest, src) => {
+            Op::MOVXA(dest, src) => {
                 self.memory[self.registers[dest as usize] as usize] = self.memory[src as usize];
             },
-            Instruction::MOVXX(dest, src) => {
+            Op::MOVXX(dest, src) => {
                 self.memory[self.registers[dest as usize] as usize] = self.memory[self.registers[src as usize] as usize];
             },
 
-            Instruction::ADDRN(dest, by) => {
+            Op::ADDRN(dest, by) => {
                 self.registers[dest as usize] = self.registers[dest as usize].wrapping_add(by);
             },
-            Instruction::ADDRR(dest, src) => {
+            Op::ADDRR(dest, src) => {
                 self.registers[dest as usize] = self.registers[dest as usize].wrapping_add(self.registers[src as usize]);
             },
-            Instruction::SUBRN(dest, by) => {
+            Op::SUBRN(dest, by) => {
                 self.registers[dest as usize] = self.registers[dest as usize].wrapping_sub(by);
             },
-            Instruction::SUBRR(dest, src) => {
+            Op::SUBRR(dest, src) => {
                 self.registers[dest as usize] = self.registers[dest as usize].wrapping_sub(self.registers[src as usize]);
             },
 
-            Instruction::ANDRR(a, b) => {
+            Op::ANDRR(a, b) => {
                 self.registers[a as usize] &= self.registers[b as usize];
             },
-            Instruction::ANDRN(a, b) => {
+            Op::ANDRN(a, b) => {
                 self.registers[a as usize] &= b;
             },
-            Instruction::XORRR(a, b) => {
+            Op::XORRR(a, b) => {
                 self.registers[a as usize] ^= self.registers[b as usize];
             },
-            Instruction::XORRN(a, b) => {
+            Op::XORRN(a, b) => {
                 self.registers[a as usize] ^= b;
             },
-            Instruction::ORRR(a, b) => {
+            Op::ORRR(a, b) => {
                 self.registers[a as usize] |= self.registers[b as usize];
             },
-            Instruction::ORRN(a, b) => {
+            Op::ORRN(a, b) => {
                 self.registers[a as usize] |= b;
             },
 
-            Instruction::SHR(reg) => {
+            Op::SHR(reg) => {
                 self.registers[reg as usize] >>= 1;
             },
-            Instruction::SHL(reg) => {
+            Op::SHL(reg) => {
                 self.registers[reg as usize] <<= 1;
             },
 
-            Instruction::PRINT(reg) => {
+            Op::PRINT(reg) => {
                 print!("{}", self.registers[reg as usize] as char);
             },
 
-            Instruction::JMP(to) => {
+            Op::JMP(to) => {
                 match self.state {
                     State::Running { ref mut pc } => {
                         *pc = to as usize;
@@ -256,7 +256,7 @@ impl Machine {
                 }
             },
 
-            Instruction::JMPIF(case, to) => {
+            Op::JMPIF(case, to) => {
                 match self.state {
                     State::Running { ref mut pc } => {
                         
@@ -290,11 +290,11 @@ impl Machine {
                 }
             },
 
-            Instruction::HALT => {
+            Op::HALT => {
                 self.state = State::Halted(self.registers[0x6]); // exit code is register c on halt
             }
 
-            Instruction::NOOP => {},
+            Op::NOOP => {},
             
             _ => {
                 unimplemented!();
@@ -305,7 +305,7 @@ impl Machine {
     fn run(&mut self) {
         self.state = State::Running { pc: 0 };
         loop {
-            let next = self.next_ins();
+            let next = self.fetch();
 
             if let Some(ins) = next {
                 // println!("{:?}", ins);
