@@ -180,7 +180,13 @@ impl Parser {
                         })?;
                         if let TokenKind::Symbol(s) = name.kind.clone() {
                             let addr: usize = code.iter().map(|op| op.get_size()).sum();
-                            labels.insert(s, addr.try_into().unwrap());
+
+                            if labels.insert(s, addr.try_into().unwrap()).is_some() {
+                                Err(ParserError {
+                                    cause: "Label already defined previously",
+                                    responsible: name,
+                                })?;
+                            }
                         } else {
                             Err(ParserError {
                                 cause: "Label name cannot be a number or a keyword",
