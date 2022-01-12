@@ -118,4 +118,50 @@ impl Op {
             Op::JMPIF(_, _) => 0x1F,
         }
     }
+
+    pub fn get_size(&self) -> usize {
+        match *self {
+            Op::HALT => 1,
+            Op::NOOP => 1,
+            
+            Op::MOVRN(_, _) => 3,
+            Op::MOVRR(_, _) => 3,
+            Op::MOVRA(_, _) => 3,
+            Op::MOVRX(_, _) => 3,
+        
+            Op::MOVAN(_, _) => 3,
+            Op::MOVAR(_, _) => 3,
+            Op::MOVAA(_, _) => 3,
+            Op::MOVAX(_, _) => 3,
+        
+            Op::MOVXN(_, _) => 3,
+            Op::MOVXR(_, _) => 3,
+            Op::MOVXA(_, _) => 3,
+            Op::MOVXX(_, _) => 3,
+        
+            Op::ADDRN(_, _) => 3,
+            Op::ADDRR(_, _) => 3,
+            Op::SUBRN(_, _) => 3,
+            Op::SUBRR(_, _) => 3,
+            Op::MULRN(_, _) => 3,
+            Op::MULRR(_, _) => 3,
+            Op::DIVRN(_, _) => 3,
+            Op::DIVRR(_, _) => 3,
+
+            Op::ANDRR(_, _) => 3,
+            Op::ANDRN(_, _) => 3,
+            Op::XORRR(_, _) => 3,
+            Op::XORRN(_, _) => 3,
+            Op::ORRR(_, _) => 3,
+            Op::ORRN(_, _) => 3,
+
+            Op::SHR(_) => 2,
+            Op::SHL(_) => 2,
+
+            Op::PRINT(_) => 2,
+        
+            Op::JMP(_) => 2,
+            Op::JMPIF(_, _) => 5,
+        }
+    }
 }
